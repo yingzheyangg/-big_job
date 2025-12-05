@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">First Application</string>
+    <string name="original_music_format">原创音乐 - %s</string>
+    <string name="reply_format">@%s </string>
+</resources>
