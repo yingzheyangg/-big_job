@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.example.firstapplication.adapter.VideoPlayerAdapter
 import com.example.firstapplication.model.Video
 import com.example.firstapplication.viewmodel.VideoViewModel
+import com.google.android.exoplayer2.Player
 
 class VideoPlayerActivity : AppCompatActivity() {
     
@@ -23,7 +24,7 @@ class VideoPlayerActivity : AppCompatActivity() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     
     private lateinit var videoPlayerAdapter: VideoPlayerAdapter
-    private var allVideos: List<Video> = emptyList()
+    private var allVideos: MutableList<Video> = mutableListOf()
     private var currentVideoIndex: Int = 0
     private var isPositionInitialized: Boolean = false
     private lateinit var exoPlayer: ExoPlayer
@@ -61,7 +62,9 @@ class VideoPlayerActivity : AppCompatActivity() {
             viewPager2 = findViewById(R.id.viewPager2)
             ivBack = findViewById(R.id.iv_back)
             swipeRefreshLayout = findViewById(R.id.swipe_refresh_player)
+
             exoPlayer = ExoPlayer.Builder(this).build()
+            exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
             
             // 设置ViewPager2为垂直滑动
             viewPager2.orientation = ViewPager2.ORIENTATION_VERTICAL
@@ -120,9 +123,6 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     private fun setupRefresh() {
         swipeRefreshLayout.setColorSchemeColors(0xFFFE2C55.toInt(), 0xFF161823.toInt())
-        swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
-            false
-        }
         swipeRefreshLayout.setOnRefreshListener {
             videoViewModel.loadAllVideos()
         }
@@ -136,7 +136,7 @@ class VideoPlayerActivity : AppCompatActivity() {
             videoViewModel.allVideos.observe(this) { videos ->
                 try {
                     if (videos.isNotEmpty()) {
-                        allVideos = videos
+                        allVideos = videos.toMutableList()
                         videoPlayerAdapter.updateVideos(videos)
                         
                         // 只在首次加载时设置当前视频位置，避免点赞时重复跳转
@@ -180,14 +180,8 @@ class VideoPlayerActivity : AppCompatActivity() {
                         // 找到当前视频在列表中的位置
                         val position = allVideos.indexOfFirst { it.id == currentVideo.id }
                         if (position != -1 && position < allVideos.size) {
-                            // 检查是否只有点赞状态发生变化
-                            val oldVideo = allVideos[position]
-                            val isLikeChanged = oldVideo.isLiked != currentVideo.isLiked || oldVideo.likeCount != currentVideo.likeCount
-                            
-                            if (isLikeChanged) {
-                                // 点赞变化，使用精确更新
-                                videoPlayerAdapter.updateVideoAt(position, currentVideo)
-                            }
+                            allVideos[position] = currentVideo
+                            videoPlayerAdapter.updateVideoAt(position, currentVideo)
                         }
                     }
                 } catch (e: Exception) {
@@ -207,6 +201,22 @@ class VideoPlayerActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "ViewModel初始化失败: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 生命周期管理：页面暂停（切后台/锁屏）时暂停播放
+    override fun onPause() {
+        super.onPause()
+        if (::exoPlayer.isInitialized) {
+            exoPlayer.playWhenReady = false
+        }
+    }
+
+    // 生命周期管理：页面恢复时自动继续播放
+    override fun onResume() {
+        super.onResume()
+        if (::exoPlayer.isInitialized) {
+            exoPlayer.playWhenReady = true
         }
     }
 
