@@ -19,8 +19,6 @@ import com.example.firstapplication.adapter.VideoGridAdapter
 import com.example.firstapplication.model.Video
 import com.example.firstapplication.viewmodel.VideoViewModel
 
-
-
 class RecommendFragment : Fragment() {
     
     private lateinit var videoViewModel: VideoViewModel
