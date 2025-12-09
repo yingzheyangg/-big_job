@@ -56,16 +56,10 @@ class VideoGridAdapter(
                 else -> count.toString()
             }
         }
-
-        private fun formatDuration(seconds: Int): String {
-            val minutes = seconds / 60
-            val remainingSeconds = seconds % 60
-            return "%d:%02d".format(minutes, remainingSeconds)
-        }
     }
 
     // Adapter 负责将数据与 Item 视图绑定，必须实现 3 个抽象方法，同时定义 ViewHolder 复用视图：
-    // 第一步：tem创建ViewHolder（加载item布局）
+    // 第一步：item创建ViewHolder（加载item布局）
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_video_grid, parent, false)

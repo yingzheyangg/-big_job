@@ -21,10 +21,6 @@ class VideoPlayerActivity : AppCompatActivity() {
     private lateinit var viewPager2: ViewPager2
     private lateinit var ivBack: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var refreshHeader: android.view.View
-    private lateinit var refreshAnimView: android.view.View
-    private lateinit var refreshTextView: android.widget.TextView
-    private var isRefreshingAnim: Boolean = false
     
     private lateinit var videoPlayerAdapter: VideoPlayerAdapter
     private var allVideos: List<Video> = emptyList()
@@ -65,9 +61,6 @@ class VideoPlayerActivity : AppCompatActivity() {
             viewPager2 = findViewById(R.id.viewPager2)
             ivBack = findViewById(R.id.iv_back)
             swipeRefreshLayout = findViewById(R.id.swipe_refresh_player)
-            refreshHeader = findViewById(R.id.refresh_header_player)
-            refreshAnimView = findViewById(R.id.iv_refresh_anim_player)
-            refreshTextView = findViewById(R.id.tv_refresh_text_player)
             exoPlayer = ExoPlayer.Builder(this).build()
             
             // 设置ViewPager2为垂直滑动
@@ -131,9 +124,6 @@ class VideoPlayerActivity : AppCompatActivity() {
             false
         }
         swipeRefreshLayout.setOnRefreshListener {
-            refreshTextView.text = "刷新视频..."
-            refreshHeader.visibility = android.view.View.VISIBLE
-            startRefreshAnimation()
             videoViewModel.loadAllVideos()
         }
     }
@@ -155,15 +145,18 @@ class VideoPlayerActivity : AppCompatActivity() {
                             val position = if (requestedId != null) {
                                 videos.indexOfFirst { it.id == requestedId }.takeIf { it >= 0 } ?: 0
                             } else 0
+
                             currentVideoIndex = position
                             viewPager2.setCurrentItem(position, false)
                             isPositionInitialized = true
+
                             viewPager2.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
                                 override fun onPreDraw(): Boolean {
                                     viewPager2.viewTreeObserver.removeOnPreDrawListener(this)
                                     supportStartPostponedEnterTransition()
-                                    swipeRefreshLayout.isRefreshing = false
-                                    stopRefreshAnimation()
+                                    if (swipeRefreshLayout.isRefreshing) {
+                                        swipeRefreshLayout.isRefreshing = false
+                                    }
                                     return true
                                 }
                             })
@@ -172,6 +165,11 @@ class VideoPlayerActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Toast.makeText(this, "数据加载错误: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+                // 无论这次有没有新数据 / 列表是不是空，只要 allVideos 有回调，就统一关掉刷新圈
+                if (swipeRefreshLayout.isRefreshing) {
+                    swipeRefreshLayout.isRefreshing = false
                 }
             }
             
@@ -204,31 +202,12 @@ class VideoPlayerActivity : AppCompatActivity() {
                 if (error != null) {
                     Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
                     swipeRefreshLayout.isRefreshing = false
-                    stopRefreshAnimation()
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "ViewModel初始化失败: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun startRefreshAnimation() {
-        if (isRefreshingAnim) return
-        isRefreshingAnim = true
-        val view = refreshAnimView
-        fun loop() {
-            if (!isRefreshingAnim) return
-            view.animate().rotationBy(360f).setDuration(600).withEndAction { loop() }.start()
-        }
-        loop()
-    }
-
-    private fun stopRefreshAnimation() {
-        if (!isRefreshingAnim) return
-        isRefreshingAnim = false
-        refreshAnimView.clearAnimation()
-        refreshHeader.visibility = android.view.View.GONE
     }
 
     override fun onDestroy() {

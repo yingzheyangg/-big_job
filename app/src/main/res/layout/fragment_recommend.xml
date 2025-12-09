@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F8F8F8">
 
+    <!-- 下拉刷新组件 -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_recommend"
         android:layout_width="0dp"
@@ -48,35 +49,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/refresh_header_recommend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="#AA000000"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp">
-
-        <ImageView
-            android:id="@+id/iv_refresh_anim_recommend"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_launcher_foreground"
-            app:tint="@android:color/white" />
-
-        <TextView
-            android:id="@+id/tv_refresh_text_recommend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="正在刷新..."
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

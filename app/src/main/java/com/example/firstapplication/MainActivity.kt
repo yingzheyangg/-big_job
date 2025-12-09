@@ -2,27 +2,16 @@ package com.example.firstapplication
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.firstapplication.adapter.VideoGridAdapter
 import com.example.firstapplication.adapter.ViewPagerAdapter
-import com.example.firstapplication.model.Video
-import com.example.firstapplication.viewmodel.VideoViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
-    
-    private lateinit var videoViewModel: VideoViewModel
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private lateinit var bottomNavigation: BottomNavigationView

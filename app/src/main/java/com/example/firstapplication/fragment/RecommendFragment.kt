@@ -29,10 +29,6 @@ class RecommendFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var tvError: TextView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var refreshHeader: View
-    private lateinit var refreshAnimView: View
-    private lateinit var refreshTextView: TextView
-    private var isRefreshingAnim = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,11 +37,11 @@ class RecommendFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_recommend, container, false)
         
-        initViews(view)
-        setupViewModel()
-        setupRecyclerView()
-        setupRefresh()
-        observeViewModel()
+        initViews(view) // 绑定 ID
+        setupViewModel() // 初始化数据模型
+        setupRecyclerView() // 配置列表视图
+        setupRefresh() // 配置下拉刷新
+        observeViewModel() // 开始监听数据变化
         
         return view
     }
@@ -55,9 +51,6 @@ class RecommendFragment : Fragment() {
         progressBar = view.findViewById(R.id.progress_bar)
         tvError = view.findViewById(R.id.tv_error)
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_recommend)
-        refreshHeader = view.findViewById(R.id.refresh_header_recommend)
-        refreshAnimView = view.findViewById(R.id.iv_refresh_anim_recommend)
-        refreshTextView = view.findViewById(R.id.tv_refresh_text_recommend)
     }
     
     private fun setupViewModel() {
@@ -83,9 +76,6 @@ class RecommendFragment : Fragment() {
     private fun setupRefresh() {
         swipeRefreshLayout.setColorSchemeColors(0xFFFE2C55.toInt(), 0xFF161823.toInt())
         swipeRefreshLayout.setOnRefreshListener {
-            refreshTextView.text = "正在刷新..."
-            refreshHeader.visibility = View.VISIBLE
-            startRefreshAnimation()
             videoViewModel.loadRecommendedVideos()
         }
     }
@@ -99,7 +89,6 @@ class RecommendFragment : Fragment() {
                 rvVideoGrid.adapter = videoGridAdapter
                 showContent()
                 swipeRefreshLayout.isRefreshing = false
-                stopRefreshAnimation()
             }
         }
         
@@ -107,7 +96,6 @@ class RecommendFragment : Fragment() {
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             if (!isLoading) {
                 swipeRefreshLayout.isRefreshing = false
-                stopRefreshAnimation()
             }
         }
         
@@ -115,31 +103,13 @@ class RecommendFragment : Fragment() {
             if (error != null) {
                 showError(error)
                 swipeRefreshLayout.isRefreshing = false
-                stopRefreshAnimation()
             } else {
                 tvError.visibility = View.GONE
             }
         }
     }
 
-    private fun startRefreshAnimation() {
-        if (isRefreshingAnim) return
-        isRefreshingAnim = true
-        val view = refreshAnimView
-        fun loop() {
-            if (!isRefreshingAnim) return
-            view.animate().rotationBy(360f).setDuration(600).withEndAction { loop() }.start()
-        }
-        loop()
-    }
-
-    private fun stopRefreshAnimation() {
-        if (!isRefreshingAnim) return
-        isRefreshingAnim = false
-        refreshAnimView.clearAnimation()
-        refreshHeader.visibility = View.GONE
-    }
-    
+    // 进入视频内流界面
     private fun onVideoClick(video: Video, sharedView: View) {
         val intent = Intent(requireContext(), VideoPlayerActivity::class.java).apply {
             putExtra("video_id", video.id)

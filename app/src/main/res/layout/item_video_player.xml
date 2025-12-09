@@ -35,11 +35,10 @@
             android:id="@+id/iv_video_placeholder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background"
-            android:transitionName="video_cover_transition"
-             />
+            android:transitionName="video_cover_transition" />
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/player_view"
@@ -191,7 +190,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@username"
+            android:text="username"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
