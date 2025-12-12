@@ -146,6 +146,53 @@ graph TD
     E --> F[点击评论按钮]
     F --> G[弹出评论面板 BottomSheet]
     G --> H[输入内容并发送]
-    H --> I[列表插入新评论并刷新]
+  H --> I[列表插入新评论并刷新]
 ```
 
+## 6. 项目结构
+
+```text
+app/
+  build.gradle.kts
+  src/main/
+    java/com/example/firstapplication/
+      MainActivity.kt                 # 主界面：TabLayout + ViewPager2 + BottomNavigation
+      VideoPlayerActivity.kt          # 单列视频内流（ExoPlayer，刷新，转场收尾）
+      adapter/
+        ViewPagerAdapter.kt           # 主页标签页适配器（推荐/商城）
+        VideoGridAdapter.kt           # 推荐页双列网格适配器（封面共享元素名）
+        VideoPlayerAdapter.kt         # 内流页适配器（容器切换、暂停图标、互动）
+      fragment/
+        RecommendFragment.kt          # 双列推荐页（刷新、数据订阅、点击转场）
+        ShopFragment.kt               # 商城占位页
+      repository/
+        VideoRepository.kt            # 示例数据来源（含 raw 视频与图片）
+      viewmodel/
+        VideoViewModel.kt             # LiveData 状态与数据加载
+      utils/
+        ResourceMapper.kt             # 封面/头像资源映射、视频 Uri 解析
+    res/
+      layout/
+        activity_main.xml             # 主界面布局（TabLayout + ViewPager2 + BottomNav）
+        fragment_recommend.xml        # 推荐页：SwipeRefreshLayout + RecyclerView
+        fragment_shop.xml             # 商城占位布局
+        item_video_grid.xml           # 双列网格 item（自适应高度）
+        activity_video_player.xml     # 播放页根（SwipeRefreshLayout + 刷新头）
+        item_video_player.xml         # 单列播放 item（PlayerView + 占位图 + 暂停图标）
+      menu/
+        bottom_navigation_menu.xml    # 底部导航（首页/我）
+      drawable/
+        play_icon.xml                 # 居中播放图标（暂停时显示）
+        pause_icon.xml                # 可选暂停图标（当前未启用）
+        like_icon.xml, like_filled_icon.xml, comment_icon.xml, share_icon.xml
+      raw/
+        demo2.*                       # 示例本地视频资源
+```
+
+### 6.1 模块职责
+- `MainActivity`：承载“推荐/商城”，负责底部“首页”跳转到 `VideoPlayerActivity`。
+- `RecommendFragment`：双列网格、下拉刷新、视频卡片共享元素转场。
+- `VideoPlayerActivity`：单例 ExoPlayer、页内切换绑定、刷新与返回。
+- `VideoGridAdapter`/`VideoPlayerAdapter`：列表项渲染与交互事件分发。
+- `VideoRepository`/`VideoViewModel`：数据生成与状态管理。
+- `ResourceMapper`：图片资源映射与视频 Uri 解析（raw/网络）。

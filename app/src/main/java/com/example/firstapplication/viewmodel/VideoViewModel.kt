@@ -80,51 +80,7 @@ class VideoViewModel : ViewModel() {
         _currentVideo.value = video
     }
     
-    /**
-     * 关注功能已移除 - 此方法保留用于向后兼容
-     * 关注按钮已从UI中删除
-     */
-    @Deprecated("关注功能已移除")
-    fun toggleFollow(user: User) {
-        viewModelScope.launch {
-            try {
-                val success = repository.toggleFollow(user.id)
-                if (success) {
-                    // 找到当前显示的视频并更新其关注状态
-                    val currentVideos = _allVideos.value.orEmpty().toMutableList()
-                    val videoIndex = currentVideos.indexOfFirst { it.author.id == user.id }
-                    
-                    if (videoIndex != -1) {
-                        val video = currentVideos[videoIndex]
-                        val updatedAuthor = video.author.copy(isFollowing = !video.author.isFollowing)
-                        val updatedVideo = video.copy(author = updatedAuthor)
-                        currentVideos[videoIndex] = updatedVideo
-                        _allVideos.value = currentVideos
-                        
-                        // 如果当前视频就是这一个，也更新currentVideo
-                        if (_currentVideo.value?.id == video.id) {
-                            _currentVideo.value = updatedVideo
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                _error.value = "操作失败: ${e.message}"
-            }
-        }
-    }
-    
-    fun loadVideoById(videoId: String) {
-        viewModelScope.launch {
-            try {
-                val video = repository.getVideoById(videoId)
-                _currentVideo.value = video
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = "加载视频失败: ${e.message}"
-            }
-        }
-    }
-    
+
     fun loadVideoComments(videoId: String) {
         viewModelScope.launch {
             try {

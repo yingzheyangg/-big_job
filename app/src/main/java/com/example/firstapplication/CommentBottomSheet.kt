@@ -30,8 +30,8 @@ class CommentBottomSheet : BottomSheetDialogFragment() {
     private var videoId: String? = null
     private var currentUser = User(
         id = "current_user",
-        username = "当前用户",
-        avatarUrl = "https://example.com/current_user.jpg",
+        username = "迎着阳光",
+        avatarUrl = "avatar5",
         followersCount = 100,
         isFollowing = false
     )

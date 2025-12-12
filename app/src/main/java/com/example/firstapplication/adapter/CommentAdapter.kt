@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-// import com.bumptech.glide.Glide // Removed to avoid dependency issues
 import com.example.firstapplication.R
 import com.example.firstapplication.model.Comment
 import com.example.firstapplication.utils.ResourceMapper

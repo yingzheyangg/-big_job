@@ -34,15 +34,8 @@ class VideoRepository {
     fun toggleLike(videoId: String): Boolean {
         return true
     }
-    
-    /**
-     * 关注功能已移除 - 此方法保留用于向后兼容
-     * 关注按钮已从UI中删除
-     */
-    @Deprecated("关注功能已移除")
-    fun toggleFollow(userId: String): Boolean {
-        return true
-    }
+
+
     
     fun toggleCommentLike(commentId: String): Boolean {
         return true
